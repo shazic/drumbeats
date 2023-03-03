@@ -1,3 +1,5 @@
+from dataclasses import dataclass, field
+
 PROJECT_STATUS = {
     'CLOSED_STATUS': 0,
     'NEW_STATUS': 1,
@@ -7,17 +9,25 @@ PROJECT_STATUS = {
 class InvalidProjectStatus(Exception):
     pass
 
-class Project():
-    def __init__(self, id, name, description, status='new'):
-        self.id = id
-        self.name = name
-        self.description = description
-        self.update_status(status)
+@dataclass
+class ProjectData:
+    name: str
+    description: str
+    status: str
+    id: int = field(default=None, compare=False)
+
+class ProjectManager:
+
+    def __init__(self, project: ProjectData):
+        self.project = project
+
+    def get(self):
+        return self.project
 
     def update_status(self, updated_project_status):
         if updated_project_status not in PROJECT_STATUS.values():
-            raise InvalidProjectStatus(self.id)
-        self.status = updated_project_status
+            raise InvalidProjectStatus(self.project.id)
+        self.project.status = updated_project_status
 
     def close(self):
-        self.status = PROJECT_STATUS['CLOSED_STATUS']
+        self.project.status = PROJECT_STATUS['CLOSED_STATUS']
